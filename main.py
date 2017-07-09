@@ -22,13 +22,32 @@ def index():
     if request.method == 'POST':
         blog_title = request.form['title']
         blog_body = request.form['body']
-        new_blog = Blog(blog_title, blog_body)
-        db.session.add(new_blog)
-        db.session.commit()
 
-    blogs = Blog.query.all()
+        title_error = ''
+        body_error = ''
 
-    return render_template('blog.html', title="Build A Blog", blogs = blogs)
+        if blog_title == "":
+            title_error = "Oops"
+
+        if blog_body == "":
+            body_error = "Yikes"
+
+        if not title_error and not body_error:    
+
+            new_blog = Blog(blog_title, blog_body)
+            db.session.add(new_blog)
+            db.session.commit()
+
+            blogs = Blog.query.all()
+
+            return render_template('blog.html', title="Build A Blog", blogs = blogs)
+
+        else:
+            return render_template('newpost.html', title="Add Blog Entry", title_error=title_error, body_error=body_error)
+
+    else:
+        blogs = Blog.query.all()
+        return render_template('blog.html', title="Build A Blog", blogs = blogs)
 
 @app.route('/newpost')
 def new_post():
