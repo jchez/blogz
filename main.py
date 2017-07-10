@@ -22,36 +22,32 @@ def index():
     if request.method == 'POST':
         blog_title = request.form['title']
         blog_body = request.form['body']
+        new_blog = Blog(blog_title, blog_body)
+        db.session.add(new_blog)
+        db.session.commit()
 
+    blogs = Blog.query.all()
+    return render_template('blog.html', title="Build A Blog", blogs = blogs)
+
+@app.route('/newpost', methods=['POST', 'GET'])
+def new_post():
+    if request.method == 'GET':
+        return render_template('newpost.html', title="Add Blog Entry")
+    else:
+        blog_title = request.form['title']
+        blog_body = request.form['body']
         title_error = ''
         body_error = ''
 
         if blog_title == "":
-            title_error = "Oops"
-
+            title_error = "Please fill in the title"
         if blog_body == "":
-            body_error = "Yikes"
-
-        if not title_error and not body_error:    
-
-            new_blog = Blog(blog_title, blog_body)
-            db.session.add(new_blog)
-            db.session.commit()
-
-            blogs = Blog.query.all()
-
-            return render_template('blog.html', title="Build A Blog", blogs = blogs)
-
+            body_error = "Please fill in the body"
+        
+        if not title_error and not body_error:
+            return redirect('/blog', title=blog_title)    
         else:
-            return render_template('newpost.html', title="Add Blog Entry", title_error=title_error, body_error=body_error)
-
-    else:
-        blogs = Blog.query.all()
-        return render_template('blog.html', title="Build A Blog", blogs = blogs)
-
-@app.route('/newpost')
-def new_post():
-    return render_template('newpost.html', title="Add Blog Entry")
+            return render_template('newpost.html', title="Add Blog Entry", title_error = title_error, body_error = body_error)
 
 if __name__ == '__main__':
     app.run()
