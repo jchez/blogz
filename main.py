@@ -18,8 +18,12 @@ class Blog(db.Model):
 
 @app.route('/blog')
 def index():
+    blog_id = request.args.get('id')
     blogs = Blog.query.all()
-    return render_template('blog.html', title="Build A Blog", blogs = blogs)
+    if blog_id:
+        return render_template('blog.html', title=blog_id, blogs = blogs)
+    else:
+        return render_template('blog.html', title="Build A Blog", blogs = blogs)
 
 @app.route('/newpost')
 def new_post():
