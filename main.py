@@ -21,7 +21,10 @@ def index():
     blog_id = request.args.get('id')
     blogs = Blog.query.all()
     if blog_id:
-        return render_template('blog.html', title=blog_id, blogs = blogs)
+        post = Blog.query.get(blog_id)
+        blog_title = post.title
+        blog_body = post.body
+        return render_template('blogpost.html', title="Blog " + blog_id, blog_title = blog_title, blog_body = blog_body)
     else:
         return render_template('blog.html', title="Build A Blog", blogs = blogs)
 
