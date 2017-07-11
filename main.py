@@ -48,7 +48,8 @@ def verify_post():
         new_blog = Blog(blog_title, blog_body)
         db.session.add(new_blog)
         db.session.commit()
-        return redirect('/blog')
+        blog = new_blog.id
+        return redirect('/blog?id={0}'.format(blog))
     else:
         return render_template('newpost.html', title="Add Blog Entry", blog_title = blog_title, blog_body = blog_body, title_error = title_error, body_error = body_error)
 
