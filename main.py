@@ -6,6 +6,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:blogz@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = 'f9eujGjai8&gjk'
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,7 +37,9 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and user.password == password:
             session['username'] = username
-            return redirect('/')
+            return redirect('/newpost')
+        else:
+            return redirect('/signup')
 
     return render_template('login.html')
 
@@ -47,7 +50,21 @@ def register():
         password = request.form['password']
         verify = request.form['verify']
 
-        #validate
+        if " " in username or len(username) < 3 or len(username) > 25:
+            flash('Invalid username', 'error')
+            return redirect('/signup')
+
+        if " " in password or len(password) < 3 or len(password) > 25:
+            flash('Invalid password', 'error')
+            return redirect('/signup')
+
+        if not username or not password or not verify:
+            flash('One or more fields are invalid', 'error')
+            return redirect('/signup')
+
+        if password != verify:
+            flash('Passwords do not match', 'error')
+            return redirect('/signup')
 
         existing_user = User.query.filter_by(username=username).first()
         if not existing_user:
@@ -55,7 +72,10 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
-            return redirect('/')
+            return redirect('/signup')
+        else:
+            flash('Username already exists', 'error')
+            return redirect('/signup')
 
     return render_template('signup.html')
 
