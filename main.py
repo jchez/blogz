@@ -114,7 +114,7 @@ def new_post():
 @app.route('/newpost', methods=['POST'])
 def verify_post():
 
-    owner = User.query.filter_by(email=session['email']).first()
+    owner = User.query.filter_by(username=session['username']).first()
 
     blog_title = request.form['title']
     blog_body = request.form['body']
