@@ -38,13 +38,17 @@ def login():
         if user and user.password == password:
             session['username'] = username
             return redirect('/newpost')
+        if user and user.password != password:
+            flash('Password is incorrect', 'error')
+            return redirect('/login')
         else:
-            return redirect('/signup')
+            flash('Username does not exist', 'error')
+            return redirect('/login')
 
     return render_template('login.html')
 
 @app.route('/signup', methods=['POST', 'GET'])
-def register():
+def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -72,7 +76,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
-            return redirect('/signup')
+            return redirect('/newpost')
         else:
             flash('Username already exists', 'error')
             return redirect('/signup')
