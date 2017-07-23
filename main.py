@@ -29,6 +29,12 @@ class User(db.Model):
         self.username = username
         self.password = password
 
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'list_blogs', 'index', 'signup']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -90,7 +96,7 @@ def logout():
 
 
 @app.route('/blog')
-def index():
+def list_blogs():
     blog_id = request.args.get('id')
     blogs = Blog.query.all()
     if blog_id:
