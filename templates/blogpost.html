@@ -3,5 +3,6 @@
 {% block content %}
     <h1 align="center">{{blog_title}}</h1>
     <p>{{blog_body}}</p>
+    <p>written by <a href="/blog?user={{owner}}">{{owner_name}}</a></p>
 
 {% endblock %}

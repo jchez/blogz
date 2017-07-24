@@ -99,11 +99,19 @@ def logout():
 def list_blogs():
     blog_id = request.args.get('id')
     blogs = Blog.query.all()
+    user_id = request.args.get('user')
     if blog_id:
         post = Blog.query.get(blog_id)
         blog_title = post.title
         blog_body = post.body
-        return render_template('blogpost.html', title="Blog " + blog_id, blog_title = blog_title, blog_body = blog_body)
+        owner = post.owner.id
+        owner_name = post.owner.username
+        return render_template('blogpost.html', title="Blog " + blog_id, blog_title = blog_title, blog_body = blog_body, owner = owner, owner_name = owner_name)
+    if user_id:
+        user = User.query.get(user_id)
+        username = user.username
+        user_blogs = user.blogs
+        return render_template('userpage.html', title=username + "'s Blogs", username = username, user_blogs = user_blogs)
     else:
         return render_template('blog.html', title="Build A Blog", blogs = blogs)
 
@@ -134,6 +142,11 @@ def verify_post():
         return redirect('/blog?id={0}'.format(blog))
     else:
         return render_template('newpost.html', title="Add Blog Entry", blog_title = blog_title, blog_body = blog_body, title_error = title_error, body_error = body_error)
+
+@app.route('/')
+def index():
+    users = User.query.all()
+    return render_template('index.html', title="Blog Users", users = users)
 
 if __name__ == '__main__':
     app.run()
