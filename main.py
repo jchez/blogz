@@ -94,7 +94,6 @@ def logout():
     del session['username']
     return redirect('/blog')
 
-
 @app.route('/blog')
 def list_blogs():
     blog_id = request.args.get('id')
@@ -113,11 +112,11 @@ def list_blogs():
         user_blogs = user.blogs
         return render_template('userpage.html', title=username + "'s Blogs", username = username, user_blogs = user_blogs)
     else:
-        return render_template('blog.html', title="Build A Blog", blogs = blogs)
+        return render_template('blog.html', title="Blog Posts", blogs = blogs)
 
 @app.route('/newpost')
 def new_post():
-    return render_template('newpost.html', title="Add Blog Entry")
+    return render_template('newpost.html', title="Add a Blog Entry")
 
 @app.route('/newpost', methods=['POST'])
 def verify_post():
